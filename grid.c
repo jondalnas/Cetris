@@ -58,6 +58,29 @@ void renderGrid(grid_t* grid_p) {
 	free(line);
 }
 
+void drawGrid(grid_t* grid_p, grid_t* target, int x, int y) {
+	for (char yy = 0; yy < target->height; yy++) {
+		int y0 = yy + y;
+		int yOffs = y0 * grid_p->width;
+
+		if (y0 < 0 || y0 >= grid_p->height) break;
+
+		for (char xx = 0; xx < target->width; xx++) {
+			int x0 = xx + x;
+			
+			if (x0 < 0 || x0 >= grid_p->width) break;
+
+			tile_t* dest = grid_p->tiles_p + x0 + yOffs;
+			tile_t* targ = target->tiles_p + xx + yy * target->width;
+
+
+			if (targ->screenObj == _NONE) continue;
+
+			dest->screenObj = targ->screenObj;
+		}
+	}
+}
+
 void drawBoxChar(grid_t* grid_p, char fill, int x, int y, int width, int height) {
 	for (char yy = 0; yy < height; yy++) {
 		int y0 = yy + y;
