@@ -119,3 +119,14 @@ void drawBoxChar(grid_t* grid_p, char fill, int x, int y, int width, int height)
 		}
 	}
 }
+
+void clearScreen(grid_t* screen_p) {
+	system("cls");
+
+	for (char y = 0; y < screen_p->height; y++) {
+		int yOffs = y * screen_p->width;
+		for (char x = 0; x < screen_p->width; x++) {
+			(screen_p->tiles_p + x + yOffs)->screenObj = _NONE;
+		}
+	}
+}
