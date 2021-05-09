@@ -1,5 +1,5 @@
 typedef struct {
-	wchar_t screenObj;
+	char screenObj;
 	char x;
 	char y;
 } tile_t;

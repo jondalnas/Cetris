@@ -2,14 +2,14 @@
 #include <stdio.h>
 #include "grid.h"
 
-const char _NONE      = 0x20; //Space
-const char _BORDER_V  = 0xBA; //Box
-const char _BORDER_H  = 0xCD; //Box
-const char _BORDER_UR = 0xBB; //Box
-const char _BORDER_UL = 0xC9; //Box
-const char _BORDER_DR = 0xBC; //Box
-const char _BORDER_DL = 0xC8; //Box
-const char _BLOCK = 0xFE; //block
+const char _NONE		= 0x20; //Space
+const char _BORDER_V  	= 0xBA; //Box
+const char _BORDER_H  	= 0xCD; //Box
+const char _BORDER_UR 	= 0xBB; //Box
+const char _BORDER_UL 	= 0xC9; //Box
+const char _BORDER_DR 	= 0xBC; //Box
+const char _BORDER_DL 	= 0xC8; //Box
+const char _BLOCK 		= 0xFE; //Block
 
 grid_t* createNewGrid(char width, char height) {
 	grid_t* grid_p = (grid_t*) malloc(sizeof(grid_t));
