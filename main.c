@@ -6,8 +6,9 @@
 #endif
 
 #include <stdio.h>
-
 #include <stdlib.h>
+#include <time.h>
+
 #include "piece.h"
 #include "input.h"
 
@@ -62,6 +63,7 @@ unsigned short collision(const piece_t* piece_p, char index, stack_t* stack_p, c
 }
 
 int main() {
+	srand(time(0));
 	//Input
 	HANDLE inputThread = CreateThread(NULL, 0, inputLoop, NULL, 0, NULL);
 
@@ -79,7 +81,7 @@ int main() {
 
 	char gravity = 10;
 
-	const piece_t* currPice_p = &L_PIECE;
+	const piece_t* currPice_p = &I_PIECE + rand() % 7;
 	grid_t* currPiceGrid_p[4]; //Maybe make pieceToGrid retun array of all rotations
 	currPiceGrid_p[0] = pieceToGrid(currPice_p, 0);
 	currPiceGrid_p[1] = pieceToGrid(currPice_p, 1);
@@ -141,6 +143,14 @@ int main() {
 
 				x = BORDER_WIDTH / 2 - 2;
 				y = rot = dx = dy = 0;
+
+				for (int i = 0; i < 4; i++) free(currPiceGrid_p[i]);
+
+				currPice_p = &I_PIECE + rand() % 7;
+				currPiceGrid_p[0] = pieceToGrid(currPice_p, 0);
+				currPiceGrid_p[1] = pieceToGrid(currPice_p, 1);
+				currPiceGrid_p[2] = pieceToGrid(currPice_p, 2);
+				currPiceGrid_p[3] = pieceToGrid(currPice_p, 3);
 			}
 		}
 
