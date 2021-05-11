@@ -15,7 +15,9 @@
 #define SLEEP 16
 #define SCREEN_WIDTH 40
 #define SCREEN_HEIGHT 20
-#define BORDER_WIDTH 20 
+#define GAME_WIDTH 10 
+#define WIDTH_SCALE 2 
+#define BORDER_WIDTH (GAME_WIDTH + 1) * WIDTH_SCALE
 
 typedef struct {
 	int* stack;
@@ -31,11 +33,11 @@ unsigned short collision(const piece_t* piece_p, char index, stack_t* stack_p, c
 		else if (x == -2) col |= 0x3333;
 		else if (x == -3) col |= 0x7777;
 		else if (x == -4) col |= 0xFFFF;
-	} else if (x > BORDER_WIDTH - 6) {
-		if (x == SCREEN_HEIGHT - 5) col |= 0x8888;
-		else if (x == SCREEN_HEIGHT - 4) col |= 0xCCCC;
-		else if (x == SCREEN_HEIGHT - 3) col |= 0xEEEE;
-		else if (x == SCREEN_HEIGHT - 2) col |= 0xFFFF;
+	} else if (x > GAME_WIDTH - 4) {
+		if (x == GAME_WIDTH - 3) col |= 0x8888;
+		else if (x == GAME_WIDTH - 2) col |= 0xCCCC;
+		else if (x == GAME_WIDTH - 1) col |= 0xEEEE;
+		else if (x == GAME_WIDTH) col |= 0xFFFF;
 	}
 
 	if (y > SCREEN_HEIGHT - 6) {
@@ -49,7 +51,7 @@ unsigned short collision(const piece_t* piece_p, char index, stack_t* stack_p, c
 		if (y + yy >= SCREEN_HEIGHT - 2) break;
 
 		for (char xx = 0; xx < 4; xx++) {
-			if (x + xx >= SCREEN_WIDTH - 2) break;
+			if (x + xx >= GAME_WIDTH) break;
 			if (x + xx < 0) continue;
 			int* stackRow = stack_p->stack + y + yy;
 
@@ -70,9 +72,9 @@ int main() {
 	grid_t* screen_p = createNewGrid(SCREEN_WIDTH, SCREEN_HEIGHT);
 	grid_t* border_p = createNewGrid(BORDER_WIDTH, SCREEN_HEIGHT);
 	
-	drawBoxChar(border_p, _NONE, 0, 0, BORDER_WIDTH, SCREEN_HEIGHT);
+	drawBoxChar(border_p, _GRID, 0, 0, BORDER_WIDTH, SCREEN_HEIGHT);
 
-	char x = BORDER_WIDTH / 2 - 2;
+	char x = GAME_WIDTH / 2 - 2;
 	char y = 0;
 	int rot = 0;
 
@@ -88,9 +90,9 @@ int main() {
 	currPiceGrid_p[2] = pieceToGrid(currPice_p, 2);
 	currPiceGrid_p[3] = pieceToGrid(currPice_p, 3);
 
-	stack_t stack = {(int*) calloc((SCREEN_HEIGHT - 2), sizeof(int)), createNewGrid(BORDER_WIDTH - 2, SCREEN_HEIGHT - 2)};
+	stack_t stack = {(int*) calloc((SCREEN_HEIGHT - 2), sizeof(int)), createNewGrid(GAME_WIDTH, SCREEN_HEIGHT - 2)};
 
-	while (1) {
+	while (!getExitGame()) {
 		clearScreen(screen_p);
 		drawGrid(screen_p, border_p, (SCREEN_WIDTH - BORDER_WIDTH) / 2, 0);
 
@@ -141,7 +143,7 @@ int main() {
 					}
 				}
 
-				x = BORDER_WIDTH / 2 - 2;
+				x = GAME_WIDTH / 2 - 2;
 				y = rot = dx = dy = 0;
 
 				for (int i = 0; i < 4; i++) free(currPiceGrid_p[i]);
@@ -168,8 +170,8 @@ int main() {
 			}
 		}
 
-		drawGrid(screen_p, stack.grid_p, (SCREEN_WIDTH - BORDER_WIDTH) / 2 + 1, 1);
-		drawGrid(screen_p, currPiceGrid_p[rot], x + (SCREEN_WIDTH - BORDER_WIDTH) / 2 + 1, y+1);
+		drawGridScale(screen_p, stack.grid_p, WIDTH_SCALE, (SCREEN_WIDTH - BORDER_WIDTH) / 2 + 1, 1);
+		drawGridScale(screen_p, currPiceGrid_p[rot], WIDTH_SCALE, x * WIDTH_SCALE + (SCREEN_WIDTH - BORDER_WIDTH) / 2 + 1, y+1);
 
 		renderGrid(screen_p);
 

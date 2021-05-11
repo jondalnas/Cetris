@@ -13,6 +13,7 @@ char getKeyDown() {
 }
 
 DWORD WINAPI inputLoop(LPVOID var) {
+	exitGame = 0;
 	while (1) {
 		char ch = getch();
 
@@ -23,7 +24,7 @@ DWORD WINAPI inputLoop(LPVOID var) {
 				arrow = a;
 			}
 		} else if (ch == 113 || ch == 81) {
-			exit(0);
+			exitGame = 1;
 			return 0;
 		} else {
 			key = ch;
@@ -31,4 +32,8 @@ DWORD WINAPI inputLoop(LPVOID var) {
 	}
 
 	return 0;
+}
+
+char getExitGame() {
+	return exitGame;
 }

@@ -9,7 +9,8 @@ const char _BORDER_UR 	= 0xBB; //Box
 const char _BORDER_UL 	= 0xC9; //Box
 const char _BORDER_DR 	= 0xBC; //Box
 const char _BORDER_DL 	= 0xC8; //Box
-const char _BLOCK 		= 0xFE; //Block
+const char _BLOCK 		= 0xDB; //Block
+const char _GRID 		= 0x2A; //Star
 
 grid_t* createNewGrid(char width, char height) {
 	grid_t* grid_p = (grid_t*) malloc(sizeof(grid_t));
@@ -73,10 +74,35 @@ void drawGrid(grid_t* grid_p, grid_t* target, int x, int y) {
 			tile_t* dest = grid_p->tiles_p + x0 + yOffs;
 			tile_t* targ = target->tiles_p + xx + yy * target->width;
 
-
 			if (targ->screenObj == _NONE) continue;
 
 			dest->screenObj = targ->screenObj;
+		}
+	}
+}
+
+void drawGridScale(grid_t* grid_p, grid_t* target, char scale, int x, int y) {
+	for (char yy = 0; yy < target->height; yy++) {
+		int y0 = yy + y;
+		int yOffs = y0 * grid_p->width;
+
+		if (y0 < 0 || y0 >= grid_p->height) continue;
+
+		for (char xx = 0; xx < target->width; xx++) {
+
+			tile_t* targ = target->tiles_p + xx + yy * target->width;
+
+			if (targ->screenObj == _NONE) continue;
+
+			for (int s = 0; s < scale; s++) {
+				int x0 = xx * scale + x;
+				
+				if (x0 < 0 || x0 >= grid_p->width) continue;
+
+				tile_t* dest = grid_p->tiles_p + x0 + s + yOffs;
+
+				dest->screenObj = targ->screenObj;
+			}
 		}
 	}
 }
@@ -90,7 +116,9 @@ void drawBoxChar(grid_t* grid_p, char fill, int x, int y, int width, int height)
 			int x0 = xx + x;
 
 			tile_t* curr = grid_p->tiles_p + x0 + yOffs;
-			curr->screenObj = fill;
+			
+			if (xx % 2 == 1 || yy % 2 == 1) curr->screenObj = fill;
+			else curr->screenObj = _NONE;
 
 			if (xx == 0) {
 				if (yy == 0) {

@@ -4,7 +4,9 @@
 
 char arrow;
 char key;
+char exitGame;
 
+char getExitGame();
 char getArrowDown();
 char getKeyDown();
 DWORD WINAPI inputLoop(LPVOID var);
