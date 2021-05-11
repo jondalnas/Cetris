@@ -16,8 +16,11 @@
 #define SCREEN_WIDTH 40
 #define SCREEN_HEIGHT 20
 #define GAME_WIDTH 10 
+#define GAME_HEIGHT SCREEN_HEIGHT - 2
 #define WIDTH_SCALE 2 
 #define BORDER_WIDTH (GAME_WIDTH + 1) * WIDTH_SCALE
+
+#define ROW_WIDTH_BITMASK 0b1111111111
 
 typedef struct {
 	int* stack;
@@ -40,15 +43,15 @@ unsigned short collision(const piece_t* piece_p, char index, stack_t* stack_p, c
 		else if (x == GAME_WIDTH) col |= 0xFFFF;
 	}
 
-	if (y > SCREEN_HEIGHT - 6) {
-		if (y == SCREEN_HEIGHT - 5) col |= 0xF000;
-		else if (y == SCREEN_HEIGHT - 4) col |= 0xFF00;
-		else if (y == SCREEN_HEIGHT - 3) col |= 0xFFF0;
-		else if (y >= SCREEN_HEIGHT - 2) col |= 0xFFFF;
+	if (y > GAME_HEIGHT - 4) {
+		if (y == GAME_HEIGHT - 3) col |= 0xF000;
+		else if (y == GAME_HEIGHT - 2) col |= 0xFF00;
+		else if (y == GAME_HEIGHT - 1) col |= 0xFFF0;
+		else if (y >= GAME_HEIGHT) col |= 0xFFFF;
 	}
 
 	for (char yy = 0; yy < 4; yy++) {
-		if (y + yy >= SCREEN_HEIGHT - 2) break;
+		if (y + yy >= GAME_HEIGHT) break;
 
 		for (char xx = 0; xx < 4; xx++) {
 			if (x + xx >= GAME_WIDTH) break;
@@ -90,7 +93,7 @@ int main() {
 	currPiceGrid_p[2] = pieceToGrid(currPice_p, 2);
 	currPiceGrid_p[3] = pieceToGrid(currPice_p, 3);
 
-	stack_t stack = {(int*) calloc((SCREEN_HEIGHT - 2), sizeof(int)), createNewGrid(GAME_WIDTH, SCREEN_HEIGHT - 2)};
+	stack_t stack = {(int*) calloc(GAME_HEIGHT, sizeof(int)), createNewGrid(GAME_WIDTH, GAME_HEIGHT)};
 
 	while (!getExitGame()) {
 		clearScreen(screen_p);
@@ -153,6 +156,26 @@ int main() {
 				currPiceGrid_p[1] = pieceToGrid(currPice_p, 1);
 				currPiceGrid_p[2] = pieceToGrid(currPice_p, 2);
 				currPiceGrid_p[3] = pieceToGrid(currPice_p, 3);
+
+				//Clear line
+				for (char y = 0; y < GAME_HEIGHT; y++) {
+					int line = *(stack.stack + y);
+
+					if ((line & ROW_WIDTH_BITMASK) != ROW_WIDTH_BITMASK) continue;
+
+					*(stack.stack + y) = 0;
+					for (char x = 0; x < GAME_WIDTH; x++) {
+						(stack.grid_p->tiles_p + x + y * GAME_WIDTH)->screenObj = _NONE;
+					}
+
+					for (char yy = y - 1; yy >= 0; yy--) {
+						*(stack.stack + yy + 1) = *(stack.stack + yy);
+
+						for (char x = 0; x < GAME_WIDTH; x++) {
+							(stack.grid_p->tiles_p + x + (yy + 1) * GAME_WIDTH)->screenObj = (stack.grid_p->tiles_p + x + yy * GAME_WIDTH)->screenObj;
+						}
+					}
+				}
 			}
 		}
 
