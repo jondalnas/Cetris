@@ -16,7 +16,12 @@
 #define SCREEN_HEIGHT 20
 #define BORDER_WIDTH 20 
 
-unsigned short collision(const piece_t* piece_p, char index, char x, char y) {
+typedef struct {
+	int* stack;
+	grid_t* grid_p;
+} stack_t;
+
+unsigned short collision(const piece_t* piece_p, char index, stack_t* stack_p, char x, char y) {
 	unsigned short pieceData = *(&piece_p->tile0 + index);
 
 	unsigned short col = 0; //4x4 collision square, at piece x, y coordinate
@@ -39,6 +44,20 @@ unsigned short collision(const piece_t* piece_p, char index, char x, char y) {
 		else if (y >= SCREEN_HEIGHT - 2) col |= 0xFFFF;
 	}
 
+	for (char yy = 0; yy < 4; yy++) {
+		if (y + yy >= SCREEN_HEIGHT - 2) break;
+
+		for (char xx = 0; xx < 4; xx++) {
+			if (x + xx >= SCREEN_WIDTH - 2) break;
+			if (x + xx < 0) continue;
+			int* stackRow = stack_p->stack + y + yy;
+
+			if ((*stackRow >> (x + xx)) & 1) {
+				col |= 1 << (xx + yy * 4);
+			}
+		}
+	}
+
 	return pieceData & col;
 }
 
@@ -55,16 +74,19 @@ int main() {
 	char y = 0;
 	int rot = 0;
 
-	float dx = 0;
-	float dy = 0;
+	char dx = 0;
+	char dy = 0;
+
+	char gravity = 10;
 
 	const piece_t* currPice_p = &L_PIECE;
-	
 	grid_t* currPiceGrid_p[4]; //Maybe make pieceToGrid retun array of all rotations
 	currPiceGrid_p[0] = pieceToGrid(currPice_p, 0);
 	currPiceGrid_p[1] = pieceToGrid(currPice_p, 1);
 	currPiceGrid_p[2] = pieceToGrid(currPice_p, 2);
 	currPiceGrid_p[3] = pieceToGrid(currPice_p, 3);
+
+	stack_t stack = {(int*) calloc((SCREEN_HEIGHT - 2), sizeof(int)), createNewGrid(BORDER_WIDTH - 2, SCREEN_HEIGHT - 2)};
 
 	while (1) {
 		clearScreen(screen_p);
@@ -72,7 +94,7 @@ int main() {
 
 		//Game logic
 		//Gravity
-		dy += 0.1;
+		dy += 1;
 
 		//Input
 		char arrow;
@@ -81,7 +103,7 @@ int main() {
 				case 72:;//UP
 					int newRot = (rot + 1) & 0x03;
 
-					if (!collision(currPice_p, newRot, x, y)) {
+					if (!collision(currPice_p, newRot, &stack, x, y)) {
 						rot = newRot;
 					}
 					break;
@@ -97,34 +119,46 @@ int main() {
 		}
 
 		//Calculating x and y
-		if (dy > 1) {
-			dy--;
-
-			if (!collision(currPice_p, rot, x, y + 1)) {
+		if (dy > gravity) {
+			if (!collision(currPice_p, rot, &stack, x, y + 1)) {
+				dy = 0;
 				y++;
-			}
-		} else if (dy < 0) {
-			dy++;
+			} else if (dy > gravity * 6) {
+				//Piece stuck
+				drawGrid(stack.grid_p, currPiceGrid_p[rot], x, y);
+				
+				unsigned short pieceData = *(&currPice_p->tile0 + rot);
 
-			if (!collision(currPice_p, rot, x, y - 1)) {
-				y--;
+				for (char yy = 0; yy < 4; yy++) {
+					for (char xx = 0; xx < 4; xx++) {
+						int* stackRow = stack.stack + yy + y;
+
+						if (pieceData & 1) *stackRow |= 1 << (x + xx);
+
+						pieceData >>= 1;
+					}
+				}
+
+				x = BORDER_WIDTH / 2 - 2;
+				y = rot = dx = dy = 0;
 			}
 		}
 
 		if (dx > 1) {
 			dx--;
 
-			if (!collision(currPice_p, rot, x + 1, y)) {
+			if (!collision(currPice_p, rot, &stack, x + 1, y)) {
 				x++;
 			}
 		} else if (dx < 0) {
 			dx++;
 
-			if (!collision(currPice_p, rot, x - 1, y)) {
+			if (!collision(currPice_p, rot, &stack, x - 1, y)) {
 				x--;
 			}
 		}
 
+		drawGrid(screen_p, stack.grid_p, (SCREEN_WIDTH - BORDER_WIDTH) / 2 + 1, 1);
 		drawGrid(screen_p, currPiceGrid_p[rot], x + (SCREEN_WIDTH - BORDER_WIDTH) / 2 + 1, y+1);
 
 		renderGrid(screen_p);
@@ -139,5 +173,7 @@ int main() {
 	CloseHandle(inputThread);
 	free(screen_p);
 	free(border_p);
+	free(stack.grid_p);
+	free(stack.stack);
 	for (int i = 0; i < 4; i++) free(currPiceGrid_p[i]);
 }

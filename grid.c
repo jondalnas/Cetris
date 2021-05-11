@@ -63,12 +63,12 @@ void drawGrid(grid_t* grid_p, grid_t* target, int x, int y) {
 		int y0 = yy + y;
 		int yOffs = y0 * grid_p->width;
 
-		if (y0 < 0 || y0 >= grid_p->height) break;
+		if (y0 < 0 || y0 >= grid_p->height) continue;
 
 		for (char xx = 0; xx < target->width; xx++) {
 			int x0 = xx + x;
 			
-			if (x0 < 0 || x0 >= grid_p->width) break;
+			if (x0 < 0 || x0 >= grid_p->width) continue;
 
 			tile_t* dest = grid_p->tiles_p + x0 + yOffs;
 			tile_t* targ = target->tiles_p + xx + yy * target->width;
