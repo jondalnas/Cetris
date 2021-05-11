@@ -10,7 +10,9 @@ const char _BORDER_UL 	= 0xC9; //Box
 const char _BORDER_DR 	= 0xBC; //Box
 const char _BORDER_DL 	= 0xC8; //Box
 const char _BLOCK 		= 0xDB; //Block
-const char _GRID 		= 0x2A; //Star
+const char _GRID_H 		= 0x7C; //Pipe
+const char _GRID_V 		= 0x2D; //Dash
+const char _GRID_C 		= 0x2B; //Plus
 
 grid_t* createNewGrid(char width, char height) {
 	grid_t* grid_p = (grid_t*) malloc(sizeof(grid_t));
@@ -117,8 +119,54 @@ void drawBoxChar(grid_t* grid_p, char fill, int x, int y, int width, int height)
 
 			tile_t* curr = grid_p->tiles_p + x0 + yOffs;
 			
-			if (xx % 2 == 1 || yy % 2 == 1) curr->screenObj = fill;
-			else curr->screenObj = _NONE;
+			curr->screenObj = fill;
+
+			if (xx == 0) {
+				if (yy == 0) {
+					curr->screenObj = _BORDER_UL;
+				} else if (yy == height - 1) {
+					curr->screenObj = _BORDER_DL;
+				} else {
+					curr->screenObj = _BORDER_V;
+				}
+			} else if (xx == width - 1) {
+				if (yy == 0) {
+					curr->screenObj = _BORDER_UR;
+
+				} else if (yy == height - 1) {
+					curr->screenObj = _BORDER_DR;
+				} else {
+					curr->screenObj = _BORDER_V;
+				}
+			} else {
+				if (yy == 0 || yy == height - 1) {
+					curr->screenObj = _BORDER_H;
+				}
+			}
+		}
+	}
+
+	//(grid_p->tiles_p + 0 + (20 - 6) * grid_p->width)->screenObj = '1';
+	//(grid_p->tiles_p + 0 + 10 * grid_p->width)->screenObj = 's';
+}
+
+void drawBoxCharGrid(grid_t* grid_p, int x, int y, int width, int height) {
+	for (char yy = 0; yy < height; yy++) {
+		int y0 = yy + y;
+		int yOffs = y0 * grid_p->width;
+
+		for (char xx = 0; xx < width; xx++) {
+			int x0 = xx + x;
+
+			tile_t* curr = grid_p->tiles_p + x0 + yOffs;
+			
+			if (xx % 2 == 1) {
+				if (yy % 2 == 1) curr->screenObj = _GRID_C;
+				else curr->screenObj = _GRID_H;
+			} else {
+				if (yy % 2 == 1) curr->screenObj = _GRID_V;
+				else curr->screenObj = _NONE;
+			}
 
 			if (xx == 0) {
 				if (yy == 0) {

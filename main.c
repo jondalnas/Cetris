@@ -75,7 +75,7 @@ int main() {
 	grid_t* screen_p = createNewGrid(SCREEN_WIDTH, SCREEN_HEIGHT);
 	grid_t* border_p = createNewGrid(BORDER_WIDTH, SCREEN_HEIGHT);
 	
-	drawBoxChar(border_p, _GRID, 0, 0, BORDER_WIDTH, SCREEN_HEIGHT);
+	drawBoxCharGrid(border_p, 0, 0, BORDER_WIDTH, SCREEN_HEIGHT);
 
 	char x = GAME_WIDTH / 2 - 2;
 	char y = 0;
