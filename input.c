@@ -9,7 +9,7 @@ char getArrowDown() {
 }
 
 char getKeyDown() {
-	return getch();
+	return key;
 }
 
 DWORD WINAPI inputLoop(LPVOID var) {
@@ -22,11 +22,11 @@ DWORD WINAPI inputLoop(LPVOID var) {
 			if (a != arrow) {
 				arrow = a;
 			}
-		}
-
-		if (ch == 113 || ch == 81) {
+		} else if (ch == 113 || ch == 81) {
 			exit(0);
 			return 0;
+		} else {
+			key = ch;
 		}
 	}
 

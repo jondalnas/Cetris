@@ -20,5 +20,7 @@ grid_t* pieceToGrid(const piece_t* piece_p, char index) {
 		pieceData >>= 1;
 	}
 
+	//border_p->tiles_p->screenObj = '*';
+
 	return border_p;
 }

@@ -3,6 +3,7 @@
 #endif
 
 char arrow;
+char key;
 
 char getArrowDown();
 char getKeyDown();

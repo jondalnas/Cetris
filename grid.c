@@ -89,8 +89,6 @@ void drawBoxChar(grid_t* grid_p, char fill, int x, int y, int width, int height)
 		for (char xx = 0; xx < width; xx++) {
 			int x0 = xx + x;
 
-			//printf("%d", (grid_p->tiles_p + x0 + yOffs)->screenObj);
-
 			tile_t* curr = grid_p->tiles_p + x0 + yOffs;
 			curr->screenObj = fill;
 
@@ -118,6 +116,9 @@ void drawBoxChar(grid_t* grid_p, char fill, int x, int y, int width, int height)
 			}
 		}
 	}
+
+	//(grid_p->tiles_p + 0 + (20 - 6) * grid_p->width)->screenObj = '1';
+	//(grid_p->tiles_p + 0 + 10 * grid_p->width)->screenObj = 's';
 }
 
 void clearScreen(grid_t* screen_p) {
