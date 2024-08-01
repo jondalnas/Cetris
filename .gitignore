@@ -53,3 +53,11 @@ dkms.conf
 
 # Object file folder
 obj/
+cetris
+
+# CCLS cache
+.ccls-cache/
+**/compile_commands.json
+
+# Tags used by vim
+**/tags

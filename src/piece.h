@@ -1,3 +1,5 @@
+#pragma once
+
 #include "grid.h"
 
 typedef struct {
@@ -9,10 +11,10 @@ typedef struct {
 
 grid_t* pieceToGrid(const piece_t* tile_p, char index);
 
-const piece_t I_PIECE;
-const piece_t L_PIECE;
-const piece_t J_PIECE;
-const piece_t Z_PIECE;
-const piece_t S_PIECE;
-const piece_t O_PIECE;
-const piece_t T_PIECE;
+extern const piece_t I_PIECE;
+extern const piece_t L_PIECE;
+extern const piece_t J_PIECE;
+extern const piece_t Z_PIECE;
+extern const piece_t S_PIECE;
+extern const piece_t O_PIECE;
+extern const piece_t T_PIECE;

@@ -1,5 +1,7 @@
 #include "input.h"
-#include <conio.h>
+/* #include <conio.h> */
+
+char arrow, key, exitGame;
 
 char getArrowDown() {
 	char temp = arrow;
@@ -12,13 +14,16 @@ char getKeyDown() {
 	return key;
 }
 
-DWORD WINAPI inputLoop(LPVOID var) {
+/* DWORD WINAPI inputLoop(LPVOID var) { */
+int inputLoop(int var) {
 	exitGame = 0;
 	while (1) {
-		char ch = getch();
+		/* char ch = getch(); */
+		char ch;
 
 		if (ch == 0) {
-			char a = getch();
+			/* char a = getch(); */
+			char a;
 
 			if (a != arrow) {
 				arrow = a;

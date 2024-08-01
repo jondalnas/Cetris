@@ -1,16 +1,36 @@
-EXEC = cetris.exe
+EXEC = cetris
 CFLAGS = -Wall
-OBJDIR = obj
 DEBUG = -DDEBUG -g
-OBJS = $(OBJDIR)/main.o $(OBJDIR)/grid.o $(OBJDIR)/piece.o $(OBJDIR)/input.o
 
-$(EXEC) : $(OBJS)
-	gcc $(CFLAGS) -o $(EXEC) $(OBJS)
+OBJDIR = obj
+SRCDIR = src
 
-$(OBJDIR)/main.o : piece.h input.h
-$(OBJDIR)/grid.o : grid.h
-$(OBJDIR)/piece.o : piece.h grid.h
-$(OBJDIR)/input.o : input.h
+SRCS := $(shell find $(SRCDIR) -name "*.c")
+OBJS = $(patsubst $(SRCDIR)/%, $(OBJDIR)/%, $(SRCS:%.c=%.o))
+DEPS = $(patsubst $(SRCDIR)/%, $(OBJDIR)/%, $(SRCS:%.c=%.d))
 
-$(OBJDIR)/%.o : %.c
-	gcc -c $(CFLAGS) -o $@ $<
+.PHONEY: release debug clean
+debug: CFLAGS += $(DEBUG)
+debug: release
+
+release: $(EXEC)
+
+$(EXEC): $(OBJS) $(DEPS)
+	$(CC) $(CFLAGS) -o $(EXEC) $(OBJS)
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	$(CC) -c $(CFLAGS) -o $@ $<
+
+$(OBJDIR)/%.d: $(SRCDIR)/%.c
+	@set -e
+	rm -f $@
+	$(CC) -MM -I $(SRCDIR) $(CFLAGS) $< > $@.tmp
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.tmp > $@
+	rm -f $@.tmp
+
+ifneq ($(MAKECMDGOALS), clean)
+-include $(DEPENDS)
+endif
+
+clean:
+	rm -f $(OBJDIR)/* $(EXEC)
