@@ -1,6 +1,6 @@
 EXEC = cetris
-CFLAGS = -Wall
-DEBUG = -DDEBUG -g
+CFLAGS = -Wall -std=gnu99
+DEBUG = -DDEBUG -g -O0
 
 OBJDIR = obj
 SRCDIR = src

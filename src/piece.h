@@ -1,20 +1,20 @@
 #pragma once
 
-#include "grid.h"
+#include <stdint.h>
 
-typedef struct {
-	unsigned short tile0; //Unrotated tile data
-	unsigned short tile1; //90deg rotated tile data
-	unsigned short tile2; //180deg rotated tile data
-	unsigned short tile3; //270deg rotated tile data
-} piece_t;
+/*
+ * 0 1 2 3
+ * 4 5 6 7
+ * 8 9 A B 
+ * C D E F
+*/
 
-grid_t* pieceToGrid(const piece_t* tile_p, char index);
+extern const uint16_t I_PIECE[4];
+extern const uint16_t J_PIECE[4];
+extern const uint16_t L_PIECE[4];
+extern const uint16_t O_PIECE[4];
+extern const uint16_t S_PIECE[4];
+extern const uint16_t T_PIECE[4];
+extern const uint16_t Z_PIECE[4];
 
-extern const piece_t I_PIECE;
-extern const piece_t L_PIECE;
-extern const piece_t J_PIECE;
-extern const piece_t Z_PIECE;
-extern const piece_t S_PIECE;
-extern const piece_t O_PIECE;
-extern const piece_t T_PIECE;
+extern const uint16_t *pieces[7];

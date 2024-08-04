@@ -1,25 +1,13 @@
-#include <stdio.h>
 #include "piece.h"
+#include <stdio.h>
 
-const piece_t I_PIECE = {0x00F0, 0x2222, 0x0F00, 0x4444};
-const piece_t L_PIECE = {0x0074, 0x0622, 0x0170, 0x0223};
-const piece_t J_PIECE = {0x0071, 0x0226, 0x0470, 0x0322};
-const piece_t Z_PIECE = {0x0063, 0x0264, 0x0630, 0x0132};
-const piece_t S_PIECE = {0x0036, 0x0462, 0x0360, 0x0231};
-const piece_t O_PIECE = {0x0660, 0x0660, 0x0660, 0x0660};
-const piece_t T_PIECE = {0x0072, 0x0262, 0x0270, 0x0232};
+const uint16_t I_PIECE[4] = {0x89AB, 0x26AE, 0x4567, 0x159D};
+const uint16_t J_PIECE[4] = {0x0456, 0x1259, 0x456A, 0x1589};
+const uint16_t L_PIECE[4] = {0x2456, 0x159A, 0x4568, 0x0159};
+const uint16_t O_PIECE[4] = {0x0145, 0x0145, 0x0145, 0x0145};
+const uint16_t S_PIECE[4] = {0x1245, 0x156A, 0x5689, 0x2569};
+const uint16_t T_PIECE[4] = {0x1456, 0x1569, 0x4569, 0x1459};
+const uint16_t Z_PIECE[4] = {0x0156, 0x2569, 0x459A, 0x1458};
 
-grid_t* pieceToGrid(const piece_t* piece_p, char index) {
-	grid_t* border_p = createNewGrid(4, 4);
-
-	unsigned short pieceData = *(&piece_p->tile0 + index);
-
-	for (int i = 0; i < 16; i++) {
-		(border_p->tiles_p + i)->screenObj = pieceData & 1 ? _BLOCK : _NONE;
-		pieceData >>= 1;
-	}
-
-	//border_p->tiles_p->screenObj = '*';
-
-	return border_p;
-}
+const uint16_t *pieces[7] = {I_PIECE, J_PIECE, L_PIECE, O_PIECE,
+                             S_PIECE, T_PIECE, Z_PIECE};
